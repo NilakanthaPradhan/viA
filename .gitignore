@@ -43,3 +43,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Sensitive / signing files
+android/key.properties
+*.jks
+*.keystore
+*.env
+.env*
+
+# Flutter generated
+.flutter-plugins
