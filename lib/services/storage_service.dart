@@ -41,6 +41,32 @@ class StorageService {
     await _prefsBox.put('hint_closed', true);
   }
 
+  // ============ THEMING ============
+  
+  static int getMapProviderIndex() {
+    return _prefsBox.get('map_provider_index', defaultValue: 0) as int;
+  }
+
+  static Future<void> saveMapProviderIndex(int index) async {
+    await _prefsBox.put('map_provider_index', index);
+  }
+
+  static String getAppTheme() {
+    return _prefsBox.get('app_theme', defaultValue: 'defaultDark') as String;
+  }
+
+  static Future<void> saveAppTheme(String themeId) async {
+    await _prefsBox.put('app_theme', themeId);
+  }
+
+  static int? getCustomThemeColor() {
+    return _prefsBox.get('custom_theme_color') as int?;
+  }
+
+  static Future<void> saveCustomThemeColor(int colorValue) async {
+    await _prefsBox.put('custom_theme_color', colorValue);
+  }
+
   // ============ ROUTES ============
 
   /// Save a new route
