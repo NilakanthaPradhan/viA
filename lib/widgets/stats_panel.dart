@@ -52,11 +52,11 @@ class StatsPanel extends StatelessWidget {
                   ShaderMask(
                     shaderCallback: (bounds) =>
                         AppColors.primaryGradient.createShader(bounds),
-                    child: const Icon(Icons.analytics_rounded,
+                    child: Icon(Icons.analytics_rounded,
                         size: 22, color: Colors.white),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Path Statistics',
                     style: TextStyle(
                       color: AppColors.textPrimary,
@@ -76,7 +76,7 @@ class StatsPanel extends StatelessWidget {
                       ),
                       child: Text(
                         '${currentSpeed!.toStringAsFixed(1)} km/h',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.redAccent,
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -92,7 +92,7 @@ class StatsPanel extends StatelessWidget {
                     ),
                     child: Text(
                       '$pointCount pts',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.primary,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -121,7 +121,7 @@ class StatsPanel extends StatelessWidget {
                           ? '${(steps / 1000).toStringAsFixed(1)}k'
                           : steps.toString(),
                       label: 'Steps',
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         colors: [Color(0xFF00E676), Color(0xFF69F0AE)],
                       ),
                     ),
@@ -145,7 +145,7 @@ class StatsPanel extends StatelessWidget {
                       icon: Icons.timer_rounded,
                       value: PathCalculator.formatDuration(duration),
                       label: 'Est. Time',
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         colors: [Color(0xFFFFAB40), Color(0xFFFFD740)],
                       ),
                     ),
@@ -194,7 +194,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w700,
@@ -203,7 +203,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w500,

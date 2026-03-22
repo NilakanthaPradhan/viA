@@ -11,6 +11,7 @@ import 'package:via_app/theme/app_theme.dart';
 import 'package:via_app/utils/distance_calculator.dart';
 import 'package:via_app/services/storage_service.dart';
 import 'package:via_app/widgets/stats_panel.dart';
+import 'package:via_app/widgets/glass_container.dart';
 import 'package:animate_do/animate_do.dart';
 
 // ============ MAP PROVIDERS ============
@@ -99,6 +100,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedProviderIndex = StorageService.getMapProviderIndex();
     _showHint = !StorageService.hasClosedHint();
     if (widget.existingRoute != null) {
       _isViewingExisting = true;
@@ -127,7 +129,7 @@ class _MapScreenState extends State<MapScreen> {
       bool serviceOn = await Geolocator.isLocationServiceEnabled();
       if (!serviceOn) {
         if (mounted) {
-          _showMsg('⚠️ Location OFF');
+          _showMsg('Location is OFF');
           await Geolocator.openLocationSettings();
         }
         if (mounted) setState(() => _isLocating = false);
@@ -138,7 +140,7 @@ class _MapScreenState extends State<MapScreen> {
         perm = await Geolocator.requestPermission();
         if (perm == LocationPermission.denied) {
           if (mounted) {
-            _showMsg('❌ Permission denied');
+            _showMsg('Permission denied');
             setState(() => _isLocating = false);
           }
           return;
@@ -146,7 +148,7 @@ class _MapScreenState extends State<MapScreen> {
       }
       if (perm == LocationPermission.deniedForever) {
         if (mounted) {
-          _showMsg('❌ Denied — open settings');
+          _showMsg('Permission denied — open settings');
           await Geolocator.openAppSettings();
           setState(() => _isLocating = false);
         }
@@ -167,7 +169,7 @@ class _MapScreenState extends State<MapScreen> {
       debugPrint('[viA] ERROR: $e');
       if (mounted) {
         setState(() => _isLocating = false);
-        _showMsg('📍 Error: $e');
+        _showMsg('Error: $e');
       }
     }
   }
@@ -179,7 +181,7 @@ class _MapScreenState extends State<MapScreen> {
       _isLocating = false;
     });
     _mapController.move(loc, 16.0);
-    _showMsg('📍 Located!');
+    _showMsg('Location found');
     if (_weatherTemp == null) _fetchWeather(lat, lng);
   }
 
@@ -214,12 +216,12 @@ class _MapScreenState extends State<MapScreen> {
       setState(() => _isLiveTracking = false);
       await _positionStream?.cancel();
       _positionStream = null;
-      _showMsg('🛑 Journey stopped. You can now save your route.');
+      _showMsg('Journey stopped. You can now save your route.');
     } else {
       // START
       bool serviceOn = await Geolocator.isLocationServiceEnabled();
       if (!serviceOn) {
-        _showMsg('⚠️ Location is OFF');
+        _showMsg('Location is OFF');
         return;
       }
       LocationPermission perm = await Geolocator.checkPermission();
@@ -237,7 +239,7 @@ class _MapScreenState extends State<MapScreen> {
         _totalCalories = 0;
         _totalDuration = 0;
       });
-      _showMsg('🚀 Journey started! Walk to track automatically.');
+      _showMsg('Journey started! Walk to track automatically.');
       
       _positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
@@ -332,7 +334,7 @@ class _MapScreenState extends State<MapScreen> {
                 TextField(
                   controller: controller,
                   autofocus: true,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white),
                   onSubmitted: doSearch,
                   onChanged: (val) {
                     _searchDebounce?.cancel();
@@ -343,18 +345,18 @@ class _MapScreenState extends State<MapScreen> {
                   decoration: InputDecoration(
                     hintText: 'Search for a place...',
                     hintStyle: TextStyle(color: AppColors.textMuted),
-                    prefixIcon: const Icon(Icons.search_rounded,
+                    prefixIcon: Icon(Icons.search_rounded,
                         color: AppColors.primary),
                     suffixIcon: searching
-                        ? const Padding(
-                            padding: EdgeInsets.all(12),
+                        ? Padding(
+                            padding: const EdgeInsets.all(12),
                             child: SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2, color: AppColors.primary)))
                         : IconButton(
-                            icon: const Icon(Icons.arrow_forward_rounded,
+                            icon: Icon(Icons.arrow_forward_rounded,
                                 color: AppColors.primary),
                             onPressed: () => doSearch(controller.text)),
                     filled: true,
@@ -379,12 +381,12 @@ class _MapScreenState extends State<MapScreen> {
                       final name = r['display_name'] as String? ?? '';
                       return ListTile(
                         dense: true,
-                        leading: const Icon(Icons.place_rounded,
+                        leading: Icon(Icons.place_rounded,
                             color: AppColors.primary, size: 20),
                         title: Text(name,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: Colors.white, fontSize: 13)),
                         onTap: () {
                           final lat = double.tryParse(r['lat'] ?? '');
@@ -394,7 +396,7 @@ class _MapScreenState extends State<MapScreen> {
                             setState(() => _searchMarker = loc);
                             _mapController.move(loc, 16.0);
                             Navigator.pop(ctx);
-                            _showMsg('📍 $name');
+                            _showMsg(name);
                           }
                         },
                       );
@@ -597,12 +599,12 @@ class _MapScreenState extends State<MapScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.bgCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Save Route',
+        title: Text('Save Route',
             style: TextStyle(color: AppColors.textPrimary)),
         content: TextField(
           controller: nc,
           autofocus: true,
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: 'e.g. Morning Walk',
             hintStyle: TextStyle(color: AppColors.textMuted),
@@ -612,7 +614,7 @@ class _MapScreenState extends State<MapScreen> {
                     color: AppColors.textMuted.withValues(alpha: 0.3))),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.primary)),
+                borderSide: BorderSide(color: AppColors.primary)),
             filled: true,
             fillColor: AppColors.bgDark,
           ),
@@ -646,7 +648,7 @@ class _MapScreenState extends State<MapScreen> {
         calories: _totalCalories,
         durationMinutes: _totalDuration,
       );
-      _showMsg('Route "$name" saved! ✓');
+      _showMsg('Route "$name" saved!');
     }
   }
 
@@ -692,6 +694,7 @@ class _MapScreenState extends State<MapScreen> {
                       padding: const EdgeInsets.only(bottom: 5),
                       child: InkWell(
                         onTap: () {
+                          StorageService.saveMapProviderIndex(i);
                           setState(() => _selectedProviderIndex = i);
                           Navigator.pop(ctx);
                         },
@@ -711,7 +714,7 @@ class _MapScreenState extends State<MapScreen> {
                                   width: sel ? 2 : 1)),
                           child: Row(children: [
                             Text(p.icon,
-                                style: const TextStyle(fontSize: 18)),
+                                style: TextStyle(fontSize: 18)),
                             const SizedBox(width: 10),
                             Text(p.name,
                                 style: TextStyle(
@@ -724,7 +727,7 @@ class _MapScreenState extends State<MapScreen> {
                                         : FontWeight.w500)),
                             const Spacer(),
                             if (sel)
-                              const Icon(Icons.check_circle_rounded,
+                              Icon(Icons.check_circle_rounded,
                                   color: AppColors.primary, size: 20),
                           ]),
                         ),
@@ -747,14 +750,39 @@ class _MapScreenState extends State<MapScreen> {
     
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg,
-          style: const TextStyle(
-              color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13)),
+      content: GlassContainer(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.notifications_active_rounded, color: AppColors.primary, size: 16),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                msg,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  letterSpacing: 0.2,
+                )
+              ),
+            ),
+          ],
+        ),
+      ),
       behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.black87,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: EdgeInsets.only(
-          left: 16, right: 16, bottom: height - topPad - 120),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      padding: EdgeInsets.zero,
+      margin: EdgeInsets.only(left: 24, right: 24, bottom: height - topPad - 130),
       duration: const Duration(seconds: 2),
     ));
   }
@@ -811,9 +839,9 @@ class _MapScreenState extends State<MapScreen> {
                         points: _pathPoints,
                         strokeWidth: 7.0,
                         gradientColors: [
-                          Colors.blue.shade400,
-                          Colors.cyanAccent,
-                          Colors.greenAccent,
+                          AppColors.primary,
+                          AppColors.accent,
+                          AppColors.success,
                         ]),
                     Polyline(
                         points: _pathPoints,
@@ -844,7 +872,7 @@ class _MapScreenState extends State<MapScreen> {
                                             blurRadius: 20,
                                             spreadRadius: 6)
                                       ]),
-                                  child: const Icon(Icons.my_location, color: Colors.white, size: 14),
+                                  child: Icon(Icons.my_location, color: Colors.white, size: 14),
                                 ),
                               )
                             : Container(
@@ -860,7 +888,7 @@ class _MapScreenState extends State<MapScreen> {
                                           blurRadius: 12,
                                           spreadRadius: 3)
                                     ]),
-                                child: const Icon(Icons.circle, color: Colors.white, size: 8),
+                                child: Icon(Icons.circle, color: Colors.white, size: 8),
                               )),
 
                   // Search marker
@@ -869,7 +897,7 @@ class _MapScreenState extends State<MapScreen> {
                         point: _searchMarker!,
                         width: 36,
                         height: 36,
-                        child: const Icon(Icons.place_rounded,
+                        child: Icon(Icons.place_rounded,
                             color: Color(0xFFFF5722), size: 36)),
 
                   // Start (green)
@@ -891,7 +919,7 @@ class _MapScreenState extends State<MapScreen> {
                                     blurRadius: 8,
                                     spreadRadius: 2)
                               ]),
-                          child: const Icon(Icons.play_arrow_rounded,
+                          child: Icon(Icons.play_arrow_rounded,
                               color: Colors.white, size: 16),
                         )),
 
@@ -914,7 +942,7 @@ class _MapScreenState extends State<MapScreen> {
                                     blurRadius: 8,
                                     spreadRadius: 2)
                               ]),
-                          child: const Icon(Icons.flag_rounded,
+                          child: Icon(Icons.flag_rounded,
                               color: Colors.white, size: 16),
                         )),
 
@@ -978,7 +1006,7 @@ class _MapScreenState extends State<MapScreen> {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: Colors.white24, width: 1.5),
                       ),
-                      child: Text(_weatherTemp!, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                      child: Text(_weatherTemp!, style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
                     ),
                   ),
                 ),
@@ -1028,7 +1056,7 @@ class _MapScreenState extends State<MapScreen> {
                               shape: BoxShape.circle,
                               color:
                                   Colors.black.withValues(alpha: 0.45)),
-                          child: const Icon(Icons.arrow_back_rounded,
+                          child: Icon(Icons.arrow_back_rounded,
                               color: Colors.white, size: 17)),
                       const SizedBox(width: 8),
                       if (widget.routeName != null)
@@ -1041,7 +1069,7 @@ class _MapScreenState extends State<MapScreen> {
                                     borderRadius:
                                         BorderRadius.circular(12)),
                                 child: Text(widget.routeName!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600),
@@ -1063,7 +1091,7 @@ class _MapScreenState extends State<MapScreen> {
                               : _pathPoints.isEmpty
                                   ? 'Double-tap to start'
                                   : 'Double-tap to finish path',
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w600)),
@@ -1091,7 +1119,27 @@ class _MapScreenState extends State<MapScreen> {
                           shape: BoxShape.circle,
                           color: Colors.black.withValues(alpha: 0.45),
                           border: Border.all(color: Colors.white24)),
-                      child: const Icon(Icons.search_rounded,
+                      child: Icon(Icons.search_rounded,
+                          color: Colors.white, size: 17)),
+                ),
+                const SizedBox(height: 8),
+                // Light/Dark Map Toggle
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      int newIndex = (_selectedProviderIndex == 6) ? 5 : 6;
+                      _selectedProviderIndex = newIndex;
+                      StorageService.saveMapProviderIndex(newIndex);
+                    });
+                  },
+                  child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black.withValues(alpha: 0.45),
+                          border: Border.all(color: Colors.white24)),
+                      child: Icon(_selectedProviderIndex == 6 ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
                           color: Colors.white, size: 17)),
                 ),
                 const SizedBox(height: 8),
@@ -1105,7 +1153,7 @@ class _MapScreenState extends State<MapScreen> {
                           shape: BoxShape.circle,
                           color: Colors.black.withValues(alpha: 0.45),
                           border: Border.all(color: Colors.white24)),
-                      child: const Icon(Icons.layers_rounded,
+                      child: Icon(Icons.layers_rounded,
                           color: Colors.white, size: 17)),
                 ),
                 const SizedBox(height: 12),
@@ -1141,7 +1189,7 @@ class _MapScreenState extends State<MapScreen> {
                           shape: BoxShape.circle,
                           color: Colors.black.withValues(alpha: 0.45),
                           border: Border.all(color: Colors.white24)),
-                      child: const Icon(Icons.arrow_back_rounded,
+                      child: Icon(Icons.arrow_back_rounded,
                           color: Colors.white, size: 17)),
                 ),
             ]),
@@ -1192,7 +1240,7 @@ class _MapScreenState extends State<MapScreen> {
                                   shape: BoxShape.circle,
                                   color: Colors.white.withValues(alpha: 0.1),
                                 ),
-                                child: const Icon(Icons.close_rounded, color: Colors.white70, size: 16),
+                                child: Icon(Icons.close_rounded, color: Colors.white70, size: 16),
                               ),
                             ),
                           )
