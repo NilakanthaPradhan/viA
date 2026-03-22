@@ -77,7 +77,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.darkGradient,
         ),
         child: Stack(
@@ -402,7 +402,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         const SizedBox(height: 8),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
@@ -411,7 +411,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             color: AppColors.textMuted,
           ),
@@ -490,7 +490,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 fontWeight: FontWeight.w700,
                               ),
                             )
-                          : const Icon(
+                          : Icon(
                               Icons.arrow_forward_rounded,
                               key: ValueKey('arrow'),
                               color: Colors.white,

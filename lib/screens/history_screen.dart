@@ -36,10 +36,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.bgCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Delete Route',
+        title: Text('Delete Route',
             style: TextStyle(color: AppColors.textPrimary)),
         content: Text('Delete "$name"?',
-            style: const TextStyle(color: AppColors.textSecondary)),
+            style: TextStyle(color: AppColors.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -82,7 +82,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final stats = StorageService.getStats();
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: AppColors.darkGradient,
       ),
       child: SafeArea(
@@ -182,7 +182,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         const SizedBox(height: 6),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -191,7 +191,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textMuted,
             fontSize: 11,
           ),
@@ -224,7 +224,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'No routes yet',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -310,7 +310,7 @@ class _RouteCard extends StatelessWidget {
                     gradient: AppColors.primaryGradient,
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.route_rounded,
                     color: Colors.white,
                     size: 22,
@@ -324,7 +324,7 @@ class _RouteCard extends StatelessWidget {
                     children: [
                       Text(
                         route.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -334,7 +334,7 @@ class _RouteCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         dateFormatted,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 12,
                         ),
@@ -408,7 +408,7 @@ class _RouteCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 13,
             fontWeight: FontWeight.w600,
